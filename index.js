@@ -12,4 +12,17 @@ const ADDRESSES = JSON.parse(fs.readFileSync(process.env.JSON_FILE));
 
 const { nodes } = ADDRESSES;
 
-console.log(nodes);
+const classifyData = nodes.reduce((dataObj, node) => {
+  const { color } = node;
+  if (!dataObj[color]) {
+    dataObj[color] = [];
+  }
+
+  node.attributes.location
+    ? dataObj[color].push(node.attributes.location)
+    : null;
+
+  return dataObj;
+}, {});
+
+console.log(classifyData);
