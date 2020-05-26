@@ -1,0 +1,25 @@
+{
+  "name": "statistics-from-addresses",
+  "version": "0.0.1",
+  "description": "Generate statistics from an addresses list",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"No defined test command\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/L0y3r/statistics-from-addresses.git"
+  },
+  "keywords": [
+    "js",
+    "google",
+    "maps",
+    "node"
+  ],
+  "author": "L0y3r",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/L0y3r/statistics-from-addresses/issues"
+  },
+  "homepage": "https://github.com/L0y3r/statistics-from-addresses#readme"
+}
