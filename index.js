@@ -41,7 +41,9 @@ addresses.reduce((byTypeObj, { results, status }) => {
 
 const saveData = (filename, data) => fs.writeFileSync(filename, JSON.stringify(data), 'utf8');
 
-const ADDRESSES = JSON.parse(fs.readFileSync(process.env.JSON_FILE));
+const readJSONData = (filename) => JSON.parse(fs.readFileSync(filename));
+
+const ADDRESSES = readJSONData(process.env.JSON_FILE);
 
 const { nodes } = ADDRESSES;
 
@@ -62,6 +64,7 @@ const generateStatistics = Object.entries(classifyData).reduce(
   async (dataObj, [color, addressesArray]) => {
     try {
       const addresses = await Promise.all(addressesArray);
+      saveData('resolved-addresses.json', addresses);
 
       dataObj[color] = countByType(address, 'country');
     } catch (error) {
