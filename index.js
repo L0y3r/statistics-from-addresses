@@ -29,7 +29,7 @@ const countByType = (addresses, desiredType) =>
         if (types.includes(desiredType)) {
           byTypeObj[long_name]
             ? (byTypeObj[long_name] += 1)
-            : (byTypeObj[long_name] = 0);
+            : (byTypeObj[long_name] = 1);
         }
       });
     }
@@ -50,15 +50,12 @@ const generateAddressesResolved = (objectPromises) =>
     Promise.resolve({})
   );
 
-const classifyAddresses = (addresses) =>
+const classifyAddresses = (addresses, type) =>
   Object.entries(addresses).reduce((dataObj, [color, addressesArray]) => {
-    try {
-      const addresses = countByType(addressesArray);
+    const addresses = countByType(addressesArray, type);
+    dataObj[color] = addresses;
 
-      dataObj[color] = addresses;
-    } catch (error) {
-      console.error('Error: ', error);
-    }
+    return dataObj;
   }, {});
 
 const saveData = (filename, data) =>
@@ -85,4 +82,6 @@ const classifyData = nodes.reduce((dataObj, node) => {
 
 generateAddressesResolved(classifyData).then((addressesResolved) => {
   saveData('./assets/resolved-addresses.json', addressesResolved);
+  const generatedStatistics = classifyAddresses(addressesResolved, 'country');
+  saveData('./assets/generated-statistics.json', generatedStatistics);
 });
