@@ -66,7 +66,7 @@ const generatedStatistics = Object.entries(classifyData).reduce(
       const addresses = await Promise.all(addressesArray);
       saveData('resolved-addresses.json', addresses);
 
-      dataObj[color] = countByType(address, 'country');
+      dataObj[color] = countByType(addresses, 'country');
     } catch (error) {
       console.error('Error: ', error);
     }
