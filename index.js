@@ -39,18 +39,15 @@ const countByType = (addresses, desiredType) =>
 
 const generateAddressesResolved = (objectPromises) =>
   Object.entries(objectPromises).reduce(
-    async (dataObj, [color, addressesArrayPromises]) => {
-      try {
-        const addresses = await Promise.all(addressesArrayPromises);
+    async (dataObjP, [color, addressesArrayPromises]) => {
+      const dataObj = await dataObjP;
+      const addresses = await Promise.all(addressesArrayPromises);
 
-        dataObj[color] = addresses;
-      } catch (error) {
-        console.error('Error: ', error);
-      }
+      dataObj[color] = addresses;
 
       return dataObj;
     },
-    {}
+    Promise.resolve({})
   );
 
 const classifyAddresses = (addresses) =>
@@ -86,6 +83,6 @@ const classifyData = nodes.reduce((dataObj, node) => {
   return dataObj;
 }, {});
 
-const addressesResolved = generateAddressesResolved(classifyData);
-
-saveData('./resolved-addresses.json', addressesResolved);
+generateAddressesResolved(classifyData).then((addressesResolved) => {
+  saveData('./assets/resolved-addresses.json', addressesResolved);
+});
