@@ -39,6 +39,21 @@ addresses.reduce((byTypeObj, { results, status }) => {
   return byTypeObj;
 }, {});
 
+const generateAddressesResolved = (objectPromises) => Object.entries(objectPromises).reduce(
+  async (dataObj, [color, addressesArray]) => {
+    try {
+      const addresses = await Promise.all(addressesArray);
+
+      dataObj[color] = addresses;
+    } catch (error) {
+      console.error('Error: ', error);
+    }
+
+    return dataObj;
+  },
+  {}
+);
+
 const saveData = (filename, data) => fs.writeFileSync(filename, JSON.stringify(data), 'utf8');
 
 const readJSONData = (filename) => JSON.parse(fs.readFileSync(filename));
@@ -60,20 +75,6 @@ const classifyData = nodes.reduce((dataObj, node) => {
   return dataObj;
 }, {});
 
-const generatedStatistics = Object.entries(classifyData).reduce(
-  async (dataObj, [color, addressesArray]) => {
-    try {
-      const addresses = await Promise.all(addressesArray);
-      saveData('resolved-addresses.json', addresses);
+const addressesResolved = generateAddressesResolved(classifyData);
 
-      dataObj[color] = countByType(addresses, 'country');
-    } catch (error) {
-      console.error('Error: ', error);
-    }
-
-    return dataObj;
-  },
-  {}
-);
-
-saveData('./assets/analized-data.json', generatedStatistics);
+saveData('./resolved-addresses.json', addressesResolved);
