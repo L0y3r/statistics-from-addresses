@@ -21,40 +21,51 @@ const createRequest = (address) =>
       })
       .on('error', (error) => reject(error));
   });
-  
+
 const countByType = (addresses, desiredType) =>
-addresses.reduce((byTypeObj, { results, status }) => {
-  if (status === 'OK') {
-    results[0].address_components.filter(
-      ({ types, long_name }) => {
+  addresses.reduce((byTypeObj, { results, status }) => {
+    if (status === 'OK') {
+      results[0].address_components.filter(({ types, long_name }) => {
         if (types.includes(desiredType)) {
           byTypeObj[long_name]
             ? (byTypeObj[long_name] += 1)
             : (byTypeObj[long_name] = 0);
         }
+      });
+    }
+
+    return byTypeObj;
+  }, {});
+
+const generateAddressesResolved = (objectPromises) =>
+  Object.entries(objectPromises).reduce(
+    async (dataObj, [color, addressesArrayPromises]) => {
+      try {
+        const addresses = await Promise.all(addressesArrayPromises);
+
+        dataObj[color] = addresses;
+      } catch (error) {
+        console.error('Error: ', error);
       }
-    );
-  }
 
-  return byTypeObj;
-}, {});
+      return dataObj;
+    },
+    {}
+  );
 
-const generateAddressesResolved = (objectPromises) => Object.entries(objectPromises).reduce(
-  async (dataObj, [color, addressesArray]) => {
+const classifyAddresses = (addresses) =>
+  Object.entries(addresses).reduce((dataObj, [color, addressesArray]) => {
     try {
-      const addresses = await Promise.all(addressesArray);
+      const addresses = countByType(addressesArray);
 
       dataObj[color] = addresses;
     } catch (error) {
       console.error('Error: ', error);
     }
+  }, {});
 
-    return dataObj;
-  },
-  {}
-);
-
-const saveData = (filename, data) => fs.writeFileSync(filename, JSON.stringify(data), 'utf8');
+const saveData = (filename, data) =>
+  fs.writeFileSync(filename, JSON.stringify(data), 'utf8');
 
 const readJSONData = (filename) => JSON.parse(fs.readFileSync(filename));
 
