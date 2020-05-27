@@ -60,7 +60,7 @@ const classifyData = nodes.reduce((dataObj, node) => {
   return dataObj;
 }, {});
 
-const generateStatistics = Object.entries(classifyData).reduce(
+const generatedStatistics = Object.entries(classifyData).reduce(
   async (dataObj, [color, addressesArray]) => {
     try {
       const addresses = await Promise.all(addressesArray);
@@ -75,3 +75,5 @@ const generateStatistics = Object.entries(classifyData).reduce(
   },
   {}
 );
+
+saveData('./assets/analized-data.json', generatedStatistics);
