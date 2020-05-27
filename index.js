@@ -39,6 +39,8 @@ addresses.reduce((byTypeObj, { results, status }) => {
   return byTypeObj;
 }, {});
 
+const saveData = (filename, data) => fs.writeFileSync(filename, JSON.stringify(data), 'utf8');
+
 const ADDRESSES = JSON.parse(fs.readFileSync(process.env.JSON_FILE));
 
 const { nodes } = ADDRESSES;
