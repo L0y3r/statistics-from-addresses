@@ -58,6 +58,16 @@ const classifyAddresses = (addresses, type) =>
     return dataObj;
   }, {});
 
+const chunkArray = (originalArray, denominator) => {
+  const splitedArray = [];
+
+  while (originalArray.length) {
+    splitedArray.push(originalArray.splice(0, denominator));
+  }
+
+  return splitedArray;
+};
+
 const saveData = (filename, data) =>
   fs.writeFileSync(filename, JSON.stringify(data), 'utf8');
 
@@ -67,7 +77,7 @@ const ADDRESSES = readJSONData(process.env.JSON_FILE);
 
 const { nodes } = ADDRESSES;
 
-const classifyData = nodes.reduce((dataObj, node) => {
+const rawNodesData = nodes.reduce((dataObj, node) => {
   const { color } = node;
   if (!dataObj[color]) {
     dataObj[color] = [];
@@ -80,7 +90,7 @@ const classifyData = nodes.reduce((dataObj, node) => {
   return dataObj;
 }, {});
 
-generateAddressesResolved(classifyData).then((addressesResolved) => {
+generateAddressesResolved(rawNodesData).then((addressesResolved) => {
   saveData('./assets/resolved-addresses.json', addressesResolved);
   const generatedStatistics = classifyAddresses(addressesResolved, 'country');
   saveData('./assets/generated-statistics.json', generatedStatistics);
